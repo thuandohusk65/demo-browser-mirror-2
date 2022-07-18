@@ -124,7 +124,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="8dp"
                 android:textAppearance="?android:attr/textAppearanceMedium"
-                android:textColor="@color/color_main2"
+                android:textColor="#038008"
                 android:textStyle="bold"
 
                 app:layout_constraintEnd_toEndOf="parent"
@@ -139,13 +139,12 @@
                 android:layout_marginStart="16dp"
                 android:background="?android:selectableItemBackgroundBorderless"
                 android:clickable="true"
-                android:contentDescription="@string/item_device_address_description_copy_address"
                 android:focusable="true"
                 android:padding="8dp"
                 app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/iv_item_device_address_share"
+                app:layout_constraintEnd_toStartOf="@id/tv_item_device_address"
                 app:layout_constraintTop_toBottomOf="@id/tv_item_device_address"
-                app:srcCompat="@drawable/ic_copy_24dp" />
+                app:srcCompat="@drawable/icon_back_white" />
         </LinearLayout>
 
         <androidx.appcompat.widget.AppCompatButton
@@ -153,13 +152,12 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            android:background="@drawable/btn_select_device"
             android:enabled="false"
             android:paddingStart="16dp"
             android:paddingEnd="16dp"
             android:text="Stop Stream"
             android:visibility="gone"
-            android:textColor="@color/white"
+            android:textColor="@color/black"
             android:textSize="14sp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"

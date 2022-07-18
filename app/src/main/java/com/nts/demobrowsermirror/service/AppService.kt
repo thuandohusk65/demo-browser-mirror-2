@@ -8,17 +8,18 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.content.ContextCompat
-import com.nhnextsoft.screenmirroring.service.helper.IntentAction
+import com.ironz.binaryprefs.BinaryPreferencesBuilder
+import com.nts.demobrowsermirror.service.helper.IntentAction
 import info.dvkr.screenstream.data.model.AppError
 import info.dvkr.screenstream.data.model.FatalError
 import info.dvkr.screenstream.data.settings.Settings
+import info.dvkr.screenstream.data.settings.SettingsImpl
 import info.dvkr.screenstream.data.settings.SettingsReadOnly
 import info.dvkr.screenstream.data.state.AppStateMachine
 import info.dvkr.screenstream.data.state.AppStateMachineImpl
 import kotlinx.coroutines.*
 import kotlinx.coroutines.channels.BufferOverflow
 import kotlinx.coroutines.flow.*
-import org.koin.android.ext.android.inject
 import timber.log.Timber
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicReference
@@ -98,12 +99,18 @@ class AppService : Service() {
         }
     }.join()
 
-    private val settings: Settings by inject()
+    private lateinit var settings: Settings
 
     private var appStateMachine: AppStateMachine? = null
 
     override fun onCreate() {
         super.onCreate()
+        settings = SettingsImpl(
+            BinaryPreferencesBuilder(applicationContext)
+                .supportInterProcess(true)
+                .exceptionHandler { ex -> Timber.e(ex) }
+                .build()
+        )
         settings.autoChangePinOnStart()
         appStateMachine = AppStateMachineImpl(this, settings as SettingsReadOnly, ::onEffect)
 
@@ -160,6 +167,7 @@ class AppService : Service() {
                     sendBroadcast(Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS))
                 appStateMachine?.sendEvent(AppStateMachine.Event.RecoverError)
             }
+            else -> {}
         }
 
         return START_NOT_STICKY

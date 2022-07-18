@@ -15,12 +15,16 @@ import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import com.ironz.binaryprefs.BinaryPreferencesBuilder
 
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.coroutineScope
 import com.afollestad.materialdialogs.MaterialDialog
+import com.afollestad.materialdialogs.lifecycle.lifecycleOwner
+import com.elvishew.xlog.LogLevel
+import com.elvishew.xlog.XLog
 import com.nhnextsoft.screenmirroring.service.AppService
 import com.nhnextsoft.screenmirroring.service.ServiceMessage
 import com.nts.demobrowsermirror.databinding.ActivityStreamBinding
@@ -32,6 +36,7 @@ import info.dvkr.screenstream.data.other.asString
 import info.dvkr.screenstream.data.other.getLog
 import info.dvkr.screenstream.data.other.setUnderlineSpan
 import info.dvkr.screenstream.data.settings.Settings
+import info.dvkr.screenstream.data.settings.SettingsImpl
 import info.dvkr.screenstream.data.settings.SettingsReadOnly
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Job
@@ -44,13 +49,12 @@ import timber.log.Timber
 
 class StreamActivity : AppCompatActivity() {
 
-    private val settingsReadOnly: SettingsReadOnly by inject()
     private val clipboard: ClipboardManager? by lazy {
         ContextCompat.getSystemService(this, ClipboardManager::class.java)
     }
 
     private lateinit var binding: ActivityStreamBinding
-    private val settings: Settings by inject()
+    private lateinit var settings: Settings
     private val serviceMessageLiveData = MutableLiveData<ServiceMessage>()
     private var serviceMessageFlowJob: Job? = null
     private var isBound: Boolean = false
@@ -73,6 +77,12 @@ class StreamActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        settings = SettingsImpl(
+            BinaryPreferencesBuilder(applicationContext)
+                .supportInterProcess(true)
+                .exceptionHandler { ex -> Timber.e(ex) }
+                .build()
+        )
         binding = ActivityStreamBinding.inflate(layoutInflater)
         setContentView(binding.root)
         viewModel = ViewModelProvider(this)[StreamViewModel::class.java]
@@ -106,6 +116,7 @@ class StreamActivity : AppCompatActivity() {
                 )
             }
         }
+        initLogger()
     }
 
     override fun onStart() {
@@ -118,6 +129,7 @@ class StreamActivity : AppCompatActivity() {
         serviceMessageLiveData.observe(this) { serviceMessage ->
             when (serviceMessage) {
                 is ServiceMessage.ServiceState -> onServiceStateMessage(serviceMessage)
+                else -> {}
             }
         }
         bindService(
@@ -259,9 +271,20 @@ class StreamActivity : AppCompatActivity() {
         }
     }
 
+    private fun initLogger() {
+        if (BuildConfig.DEBUG) {
+            XLog.init(LogLevel.ALL)
+        } else {
+            XLog.init(LogLevel.ERROR)
+        }
+
+
+    }
+
     private fun showError(appError: AppError?) {
         when (appError) {
             is FixableError.AddressInUseException -> setNewPortAndReStart()
+            else -> {}
         }
     }
 
@@ -306,7 +329,7 @@ class StreamActivity : AppCompatActivity() {
             serviceMessage.netInterfaces.sortedBy { it.address.asString() }
                 .forEach { netInterface ->
                     val fullAddress =
-                        "http://${netInterface.address.asString()}:${settingsReadOnly.severPort}"
+                        "http://${netInterface.address.asString()}:${settings.severPort}"
                     binding.tvItemDeviceAddress.text = fullAddress.setUnderlineSpan()
 
                 }
@@ -316,7 +339,7 @@ class StreamActivity : AppCompatActivity() {
     }
 
     private fun showNotification() {
-        val intent = Intent(this, ScreenMirroringApp::class.java)
+        val intent = Intent(this, App::class.java)
 
         val pendingIntent: PendingIntent =
             PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_IMMUTABLE)
