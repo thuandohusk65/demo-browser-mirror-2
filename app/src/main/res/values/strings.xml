@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name">Demo BrowserMirror</string>
+    <string name="action_settings">Settings</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="next">Next</string>
+    <string name="previous">Previous</string>
+
+    <string name="hello_first_fragment">Hello first fragment</string>
+    <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
+    <string name="permission_activity_error_title_activity_not_found">Permission dialog error</string>
+    <string name="permission_activity_error_activity_not_found">Android bug. Don\'t check \"Don\'t show again\" at the rights request dialogue to capture the screen. If you already did so, reinstall the app.</string>
+    <string name="permission_activity_cast_permission_required_title">Permission required</string>
+    <string name="permission_activity_cast_permission_required">Screen Mirroring application requires Screen Cast permission to capture screen.</string>
+    <string name="permission_activity_error_title">Error</string>
+    <string name="permission_activity_error_unknown">Unknown error</string>
+    <string name="stream_fragment_copied">Copied</string>
+
+</resources>

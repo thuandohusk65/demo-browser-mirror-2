@@ -1,0 +1,21 @@
+pluginManagement {
+    repositories {
+        gradlePluginPortal()
+        google()
+        mavenCentral()
+    }
+}
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        maven {
+            //IronSource
+            url "https://android-sdk.is.com/"
+        }
+        google()
+        mavenCentral()
+    }
+}
+rootProject.name = "Demo BrowserMirror"
+include ':app'
+include ':screen-stream'
