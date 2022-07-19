@@ -1,6 +1,5 @@
 package com.nts.demobrowsermirror
 
-
 import android.app.*
 import android.content.*
 import android.media.RingtoneManager
@@ -37,7 +36,6 @@ import info.dvkr.screenstream.data.other.getLog
 import info.dvkr.screenstream.data.other.setUnderlineSpan
 import info.dvkr.screenstream.data.settings.Settings
 import info.dvkr.screenstream.data.settings.SettingsImpl
-import info.dvkr.screenstream.data.settings.SettingsReadOnly
 import kotlinx.coroutines.CoroutineName
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.catch

@@ -8,10 +8,12 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import androidx.core.content.ContextCompat
+import com.elvishew.xlog.XLog
 import com.ironz.binaryprefs.BinaryPreferencesBuilder
 import com.nts.demobrowsermirror.service.helper.IntentAction
 import info.dvkr.screenstream.data.model.AppError
 import info.dvkr.screenstream.data.model.FatalError
+import info.dvkr.screenstream.data.other.getLog
 import info.dvkr.screenstream.data.settings.Settings
 import info.dvkr.screenstream.data.settings.SettingsImpl
 import info.dvkr.screenstream.data.settings.SettingsReadOnly
@@ -68,6 +70,7 @@ class AppService : Service() {
 
     private suspend fun onEffect(effect: AppStateMachine.Effect) = coroutineScope.launch {
         if (effect !is AppStateMachine.Effect.Statistic)
+            XLog.d(this@AppService.getLog("onEffect", "Effect: $effect"))
 
         when (effect) {
             is AppStateMachine.Effect.ConnectionChanged -> Unit  // TODO Notify user about restart reason
@@ -112,6 +115,9 @@ class AppService : Service() {
                 .build()
         )
         settings.autoChangePinOnStart()
+        settings.enablePin = true
+        settings.pin = "123"
+
         appStateMachine = AppStateMachineImpl(this, settings as SettingsReadOnly, ::onEffect)
 
         isRunning = true
